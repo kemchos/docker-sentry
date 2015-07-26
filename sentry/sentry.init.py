@@ -27,5 +27,7 @@ project.name = 'Default'
 project.organization = organization
 project.save()
 
+f = open('dsn', 'wb')
 key = ProjectKey.objects.filter(project=project)[0]
-print 'SENTRY_DSN = "%s"' % (key.get_dsn(),)
+f.write(key.get_dsn())
+f.close()

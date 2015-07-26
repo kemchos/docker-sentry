@@ -18,8 +18,8 @@ RUN echo "http://nl.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
     && apk del --purge build-dev \
     && rm -rf /tmp/* /var/cache/apk/* /root/.cache/*
 
-COPY ./sentry/sentry.conf.py /etc/sentry.conf.py
-COPY ./sentry/sentry.init.py /etc/sentry.init.py
+COPY ./sentry/sentry.conf.py /etc/sentry/sentry.conf.py
+COPY ./sentry/sentry.init.py /etc/sentry/sentry.init.py
 COPY ./redis/redis.conf /etc/redis.conf
 COPY ./supervisord/supervisord.conf /etc/supervisord.conf
 
@@ -27,6 +27,7 @@ EXPOSE 9000
 
 ENTRYPOINT redis-server /etc/redis.conf \
     && source /www/sentry/bin/activate \
-    && SENTRY_CONF=/etc/sentry.conf.py sentry upgrade --noinput \
-    && SENTRY_CONF=/etc/sentry.conf.py python /etc/sentry.init.py >> /opt/sentry/dsn \
+    && SENTRY_CONF=/etc/sentry/sentry.conf.py sentry upgrade --noinput \
+    && SENTRY_CONF=/etc/sentry/sentry.conf.py python /etc/sentry/sentry.init.py \
+    && mv dsn /opt/sentry/dsn \
     && supervisord -c /etc/supervisord.conf
